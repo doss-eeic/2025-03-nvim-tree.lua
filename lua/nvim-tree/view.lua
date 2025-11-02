@@ -151,6 +151,8 @@ end
 local function set_window_options_and_buffer()
   pcall(vim.api.nvim_command, "buffer " .. M.get_bufnr())
 
+  vim.api.nvim_set_option_value("guicursor", "n:CursorLine", { scope = "local" })
+
   if vim.fn.has("nvim-0.10") == 1 then
     local eventignore = vim.api.nvim_get_option_value("eventignore", {})
     vim.api.nvim_set_option_value("eventignore", "all", {})
