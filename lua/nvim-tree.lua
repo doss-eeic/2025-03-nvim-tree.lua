@@ -193,6 +193,19 @@ local function setup_autocommands(opts)
     create_nvim_tree_autocmd({ "BufEnter", "BufNewFile" }, { callback = M.open_on_directory, nested = true })
   end
 
+  create_nvim_tree_autocmd("BufEnter", {
+    callback = function()
+      print("debug | create hide cursor autocmd")
+      view.hide_cursor()
+    end,
+  })
+  create_nvim_tree_autocmd("BufLeave", {
+    pattern = "NvimTree_*",
+    callback = function()
+      view.show_cursor()
+    end,
+  })
+
   if opts.view.centralize_selection then
     create_nvim_tree_autocmd("BufEnter", {
       pattern = "NvimTree_*",
@@ -259,6 +272,7 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
   disable_netrw = false,
   hijack_netrw = true,
   hijack_unnamed_buffer_when_opening = false,
+  is_invisible_cursor = true,
   root_dirs = {},
   prefer_startup_root = false,
   sync_root_with_cwd = false,

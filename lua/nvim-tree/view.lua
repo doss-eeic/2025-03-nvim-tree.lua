@@ -20,6 +20,7 @@ M.View = {
   tabpages             = {},
   cursors              = {},
   hide_root_folder     = false,
+  is_invisible_cursor  = true,
   live_filter          = {
     prev_focused_node = nil,
   },
@@ -151,7 +152,7 @@ end
 local function set_window_options_and_buffer()
   pcall(vim.api.nvim_command, "buffer " .. M.get_bufnr())
 
-  vim.api.nvim_set_option_value("guicursor", "n:CursorLine", { scope = "local" })
+  -- vim.api.nvim_set_option_value("guicursor", "n:CursorLine", { scope = "local" })
 
   if vim.fn.has("nvim-0.10") == 1 then
     local eventignore = vim.api.nvim_get_option_value("eventignore", {})
@@ -422,6 +423,32 @@ function M.open_in_win(opts)
     M.resize()
   end
   events._dispatch_on_tree_open()
+end
+
+function M.hide_cursor()
+  print("debug | called hide_cursor in view.lua")
+  local cursorline_hl = vim.api.nvim_get_hl(0, { name = "CursorLine" })
+  print("debug | cursorline_hl" .. tostring(cursorline_hl.background) .. ", " .. tostring(cursorline_hl.foreground))
+  local bg_color = cursorline_hl.background or ffffff
+  local fg_color = cursorline_hl.foreground or ffffff
+  local target_group = "NvimTreeCursorInvisible"
+  local hl_options = {
+    bg = ffffff,
+    fg = ffffff,
+  }
+  if hl_options ~= nil then
+    vim.api.nvim_set_hl(0, target_group, hl_options)
+    print("debug | set highlight for " .. target_group)
+    print("debug | bg: " .. tostring(bg_color) .. ", fg: " .. tostring(fg_color))
+  else
+    print("Failed to set highlight for " .. target_group)
+  end
+end
+
+function M.show_cursor()
+  if M.view.is_invisible_cursor then
+    vim.api.nvim_set_hl(0, "CursorLine", {})
+  end
 end
 
 function M.abandon_current_window()
