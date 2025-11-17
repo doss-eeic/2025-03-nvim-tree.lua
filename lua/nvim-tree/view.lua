@@ -442,7 +442,7 @@ function M.hide_cursor()
     for setting in string.gmatch(current_guicursor, "[^,]+") do
       local mode_prefix, rest = setting:match("^([%w%-]+):(.+)$")
       if mode_prefix and rest then
-        if mode_prefix:find("n") the  n
+        if mode_prefix:find("n") then
           table.insert(new_guicursor_parts, mode_prefix .. ":" .. "ver01-" .. target_group)
         else
           table.insert(new_guicursor_parts, setting)
