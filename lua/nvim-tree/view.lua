@@ -426,29 +426,56 @@ function M.open_in_win(opts)
 end
 
 function M.hide_cursor()
-  print("debug | called hide_cursor in view.lua")
-  local cursorline_hl = vim.api.nvim_get_hl(0, { name = "CursorLine" })
-  print("debug | cursorline_hl" .. tostring(cursorline_hl.background) .. ", " .. tostring(cursorline_hl.foreground))
-  local bg_color = cursorline_hl.background or ffffff
-  local fg_color = cursorline_hl.foreground or ffffff
+  local hl_options = {}
+  local cursorline_hl_data = vim.api.nvim_get_hl_by_name("CursorLine", true)
+  local cursornormal_hl_data = vim.api.nvim_get_hl_by_name("Normal", true)
+  local bg_color = cursorline_hl_data.background
+  local fg_color = cursornormal_hl_data.foreground
+  if bg_color then hl_options.bg = bg_color end
+  if fg_color then hl_options.fg = fg_color end
   local target_group = "NvimTreeCursorInvisible"
-  local hl_options = {
-    bg = ffffff,
-    fg = ffffff,
-  }
-  if hl_options ~= nil then
+  
+  if next(hl_options) ~= nil then
     vim.api.nvim_set_hl(0, target_group, hl_options)
-    print("debug | set highlight for " .. target_group)
-    print("debug | bg: " .. tostring(bg_color) .. ", fg: " .. tostring(fg_color))
+    local current_guicursor = vim.api.nvim_get_option_value("guicursor", {})
+    local new_guicursor_parts = {}
+    for setting in string.gmatch(current_guicursor, "[^,]+") do
+      local mode_prefix, rest = setting:match("^([%w%-]+):(.+)$")
+      if mode_prefix and rest then
+        if mode_prefix:find("n") the  n
+          table.insert(new_guicursor_parts, mode_prefix .. ":" .. "ver01-" .. target_group)
+        else
+          table.insert(new_guicursor_parts, setting)
+        end
+      else
+        table.insert(new_guicursor_parts, setting)
+      end
+    end
+    local new_guicursor = table.concat(new_guicursor_parts, ",")
+    vim.api.nvim_set_option_value("guicursor", new_guicursor, { scope = "local" })
   else
-    print("Failed to set highlight for " .. target_group)
+    print("Failed to get valid color data for highlight.")
   end
 end
 
 function M.show_cursor()
-  if M.view.is_invisible_cursor then
-    vim.api.nvim_set_hl(0, "CursorLine", {})
+  local current_guicursor = vim.api.nvim_get_option_value("guicursor", {})
+  local new_guicursor_parts = {}
+
+  for setting in string.gmatch(current_guicursor, "[^,]+") do
+    local mode_prefix, rest = setting:match("^([%w%-]+):(.+)$")
+    if mode_prefix and rest then
+      if mode_prefix:find("n") then
+        table.insert(new_guicursor_parts, mode_prefix .. ":" .. "block")
+      else
+        table.insert(new_guicursor_parts, setting)
+      end
+    else
+      table.insert(new_guicursor_parts, setting)
+    end
   end
+  local new_guicursor = table.concat(new_guicursor_parts, ",")
+  vim.api.nvim_set_option_value("guicursor", new_guicursor, { scope = "local" })
 end
 
 function M.abandon_current_window()

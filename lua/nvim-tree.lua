@@ -194,8 +194,8 @@ local function setup_autocommands(opts)
   end
 
   create_nvim_tree_autocmd("BufEnter", {
+    pattern = "NvimTree_*",
     callback = function()
-      print("debug | create hide cursor autocmd")
       view.hide_cursor()
     end,
   })
