@@ -297,6 +297,42 @@ Api.node.open.toggle_group_empty = wrap_node(open_or_expand_or_dir_up("toggle_gr
 Api.node.open.preview = wrap_node(open_or_expand_or_dir_up("preview"))
 Api.node.open.preview_no_picker = wrap_node(open_or_expand_or_dir_up("preview_no_picker"))
 
+---@param toggle_group boolean?
+---@return fun(node: Node, edit_opts: NodeEditOpts?)
+local function collapse(toggle_group)
+  ---@param node Node
+  ---@param edit_opts NodeEditOpts?
+  return function(node, edit_opts)
+    vim.print("debug | collapse called")
+    local dir = node:as(DirectoryNode)
+
+    if dir then
+      dir:collapse(toggle_group)
+    end
+  end
+end
+
+Api.node.open.collapse = wrap_node(collapse("", false))
+
+---@param mode string
+---@param toggle_group boolean?
+---@return fun(node: Node, edit_opts: NodeEditOpts?)
+local function expand(mode, toggle_group)
+  ---@param node Node
+  ---@param edit_opts NodeEditOpts?
+  return function(node, edit_opts)
+    vim.print("debug | expand called")
+    local root = node:as(RootNode)
+    local dir = node:as(DirectoryNode)
+
+    if dir then
+      dir:expand(toggle_group)
+    end
+  end
+end
+
+Api.node.open.expand = wrap_node(expand("", false))
+
 Api.node.show_info_popup = wrap_node(actions.node.file_popup.toggle_file_info)
 Api.node.run.cmd = wrap_node(actions.node.run_command.run_file_command)
 Api.node.run.system = wrap_node(actions.node.system_open.fn)

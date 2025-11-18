@@ -192,6 +192,50 @@ function DirectoryNode:expand_or_collapse(toggle_group)
   self.explorer.renderer:draw()
 end
 
+function DirectoryNode:collapse()
+  if self.has_children then
+    self.has_children = false
+  end
+
+  local head_node = self:get_parent_of_group() or self
+
+  local open = self:last_group_node().open
+  local next_open
+  next_open = false
+
+  local node = head_node
+  while node do
+    node.open = next_open
+    node = node.group_next
+  end
+
+  self.explorer.renderer:draw()
+end
+
+function DirectoryNode:expand()
+  if self.has_children then
+    self.has_children = false
+  end
+
+  if #self.nodes == 0 then
+    self.explorer:expand(self)
+  end
+
+  local head_node = self:get_parent_of_group() or self
+
+  local open = self:last_group_node().open
+  local next_open
+  next_open = true
+
+  local node = head_node
+  while node do
+    node.open = next_open
+    node = node.group_next
+  end
+
+  self.explorer.renderer:draw()
+end
+
 ---@return HighlightedString icon
 function DirectoryNode:highlighted_icon()
   if not self.explorer.opts.renderer.icons.show.folder then
