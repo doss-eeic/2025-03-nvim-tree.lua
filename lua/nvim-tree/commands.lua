@@ -141,6 +141,26 @@ local CMDS = {
     },
     command = api.diagnostics.hi_test,
   },
+  {
+    name = "NvimTreeCollapse",
+    opts = {
+      desc = "nvim-tree: collapse",
+      bar = true,
+    },
+    command = function()
+      api.node.open.collapse()
+    end,
+  },
+  {
+    name = "NvimTreeExpand",
+    opts = {
+      desc = "nvim-tree: expand",
+      bar = true,
+    },
+    command = function()
+      api.node.open.expand()
+    end,
+  }
 }
 
 function M.get()
